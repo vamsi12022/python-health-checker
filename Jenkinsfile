@@ -9,19 +9,32 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh 'python -m venv .venv'
+                sh 'source .venv/bin/activate && pip install --no-cache-dir -r requirements.txt'
             }
         }
         stage('Test') {
             steps {
-                sh 'pytest'
+                sh 'source .venv/bin/activate && pytest'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deployment stage - no specific deployment defined for this health checker.'
-                // Add deployment steps here if applicable, e.g., pushing to a container registry, deploying to a cloud service.
+                echo 'Deployment stage placeholder - e.g., push to container registry, deploy to cloud, etc.'
+                // Example: sh 'docker build -t my-health-checker:latest .'
+                // Example: sh 'docker push my-health-checker:latest'
             }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+        success {
+            echo 'Pipeline succeeded!'
         }
     }
 }
